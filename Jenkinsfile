@@ -7,9 +7,9 @@ pipeline {
             label 'agent_jenkins'
         }
 
-        //   tools {
-        //         maven 'Maven-3.9.6'
-        //     }
+          tools {
+                maven 'Maven-3.9.12' // Nom de l'installation Maven configurée dans Jenkins
+            }
 
 
         environment {
@@ -89,30 +89,30 @@ pipeline {
 
 
                           // 🔹 Analyse SonarQube Frontend
-                        //   stage('Analyse SonarQube Frontend') {
-                        //       steps {
-                        //           dir('frontend') {
-                        //               script {
-                        //                   withSonarQubeEnv('SonarQube') {
-                        //                       withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_AUTH_TOKEN')]) {
+                          stage('Analyse SonarQube Frontend') {
+                              steps {
+                                  dir('frontend') {
+                                      script {
+                                          withSonarQubeEnv('SonarQube') {
+                                              withCredentials([string(credentialsId: 'sonarqube-credential', variable: 'SONAR_AUTH_TOKEN')]) {
 
-                        //                           // 🔹 Récupère le chemin du scanner déclaré dans Jenkins Tools
-                        //                           def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                                                  // 🔹 Récupère le chemin du scanner déclaré dans Jenkins Tools
+                                                  def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
 
-                        //                           bat """
-                        //                               "${scannerHome}\\bin\\sonar-scanner.bat" ^
-                        //                                   -Dsonar.projectKey=analyse-code-frontend ^
-                        //                                   -Dsonar.projectName="analyse-code-frontend" ^
-                        //                                   -Dsonar.sources=src ^
-                        //                                   -Dsonar.host.url=http://localhost:9000 ^
-                        //                                   -Dsonar.token=%SONAR_AUTH_TOKEN%
-                        //                           """
-                        //                       }
-                        //                   }
-                        //               }
-                        //           }
-                        //       }
-                        //   }
+                                                  bat """
+                                                      "${scannerHome}\\bin\\sonar-scanner.bat" ^
+                                                          -Dsonar.projectKey=sonarqube-credential ^
+                                                          -Dsonar.projectName="sonarqube-credential" ^
+                                                          -Dsonar.sources=src ^
+                                                          -Dsonar.host.url=http://localhost:9000 ^
+                                                          -Dsonar.token=%SONAR_AUTH_TOKEN%
+                                                  """
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
 
 
 
