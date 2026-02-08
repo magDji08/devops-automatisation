@@ -114,7 +114,43 @@ pipeline {
                               }
                           }
 
+                
+            stage('OWASP Dependency-Check Frontend') {
+                steps {
+                    dir('frontend') {
+                        script {
+                            def depCheckHome = tool(
+                                name: 'dependency-check-12.1.6',
+                                type: 'org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation'
+                            )
 
+                            bat """
+                            if not exist reports mkdir reports
+
+                            "${depCheckHome}\\bin\\dependency-check.bat" ^
+                            --scan . ^
+                            --disableAssembly ^
+                            --disableYarnAudit ^
+                            --format HTML ^
+                            --format XML ^
+                            --out reports
+                            """
+                        }
+                    }
+                }
+
+                post {
+                    always {
+                        // 📊 Publication du rapport XML dans Jenkins
+                        dependencyCheckPublisher pattern: 'frontend/reports/dependency-check-report.xml'
+
+                        // 📁 Archivage du rapport HTML
+                        archiveArtifacts artifacts: 'frontend/reports/dependency-check-report.html',
+                                        fingerprint: true
+                    }
+                }
+            }
+    
 
             //  Build Frontend  Docker Image
             stage('Build frontend Docker Image') {
